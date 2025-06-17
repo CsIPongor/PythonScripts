@@ -80,29 +80,7 @@ def analyze_image_objects(image_path, segmentation_method='Otsu'):
         object_area_physical = label_shape_filter.GetPhysicalSize(label)
         centroid = label_shape_filter.GetCentroid(label)
         
-        # SimpleITK's GetElongation returns the ratio of the minor axis length to the major axis length.
-        # Circularity can be approximated using 4 * pi * Area / Perimeter^2.
-        # SimpleITK provides "PerimeterOnBorder" but not directly "Perimeter".
-        # We can use "roundness" or "elongation" as proxies.
-        # Let's calculate a common definition of circularity: (4 * pi * Area) / (Perimeter^2)
-        # Note: Getting exact perimeter in SimpleITK for 2D is a bit more involved (e.g., using BinaryContourImageFilter)
-        # For simplicity, we'll use Elongation or Flatness if available directly.
-        # As per SimpleITK documentation, Elongation is sqrt(1 - (minor_axis^2 / major_axis^2))
-        # Let's use the Ratio of Principal Moments for a more direct circularity-like measure or Elongation
-        
-        # A more common circularity metric can be approximated from principal moments
-        # For a perfectly circular object, the principal moments are equal.
-        # We can use Elongation as provided by SimpleITK, which is related to circularity.
-        # Elongation = sqrt(1 - (minor_axis_length^2 / major_axis_length^2))
-        # Or, we can use the "Roundness" if we were to fit an ellipse.
-        # For now, let's use elongation as a proxy, and mention the circularity formula if perimeter was available.
-        # The Circularity often used is 4*pi*Area / (Perimeter^2). SimpleITK does not directly give perimeter for LabelShapeStatistics.
-        # So, we'll use "Roundness" based on principal axes.
-        
-        # The "Flatness" is defined as ratio of min to max principal moments (closest to 1 is more circular)
-        # The "Elongation" is sqrt(1 - (min_principal_axis_length^2 / max_principal_axis_length^2)) (closest to 0 is more circular)
-        
-        # Let's use `GetElongation` as a measure of how far from circular the object is.
+   
         # A value closer to 0 indicates a more circular object.
         elongation = label_shape_filter.GetElongation(label)
 
